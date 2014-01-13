@@ -30,5 +30,9 @@ dist = l2_distance(valid_data', train_data');
 nearest = nearest(:,1:k);
 valid_labels = train_labels(nearest);
 
-% note this only works for binary labels
-valid_labels = mean(valid_labels,2) >= 0.5;
+% For binary labels, return 0/1 based on a threshold of 0.5
+%valid_labels = mean(valid_labels,2) >= 0.5;
+
+% For other cases, use the mode to find the most frequent predicted label
+% for each validation case 
+valid_labels = mode(valid_labels, 2);

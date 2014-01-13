@@ -16,7 +16,7 @@ end
 
 %% Define data sets
 % Define training set
-tmp = randperm(10,2);
+tmp = randperm(10,3);
 train_X = X(:, ~ismember([1:10], tmp), :); % drop the 10th sample from training
 train_Y = Y(:, ~ismember([1:10], tmp), :);
 % Define test set
@@ -57,7 +57,7 @@ for NumNeighbors = 2:5
     fprintf('\tCross-validation loss: %.2f%%.\n', 100 * kfoldLoss(cv_model));
 end
 
-%% Test using euclidean distance and 5 neighbours
+% Test using euclidean distance and 5 neighbours
 NumNeighbors = 1;
 fprintf('Model: euclidean distance, %d neighbours\n', NumNeighbors);
 % Build model
@@ -65,5 +65,12 @@ model = ClassificationKNN.fit(train_X, train_Y, ...
     'NumNeighbors', NumNeighbors, ...
     'Distance','cosine'); 
 % Test 
-fprintf('\t%d/%d were misclassified\n', numel(find(test_Y ~= predict(model, test_X))), numel(test_Y));
+fprintf('\tClassification rate on test data: %.2f\n', 100*(1-numel(find(test_Y ~= predict(model, test_X)))/numel(test_Y)));
 
+%% Test another implementation 
+fprintf('\n\nExamining quality of the another classifier that uses l2_distance function.\n');
+for NumNeighbors = 1:5
+    fprintf('Model: euclidean, %d neighbours\n', NumNeighbors);
+    predict_labels = knn(NumNeighbors, train_X, train_Y, test_X);
+    fprintf('\tClassification rate on test data: %.2f\n', 100*(1-numel(find(test_Y ~= predict_labels))/numel(test_Y)));
+end
